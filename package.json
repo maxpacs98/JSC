@@ -1,0 +1,20 @@
+{
+  "name": "jsc",
+  "version": "1.0.0",
+  "description": "Javascript clients for both servers to be benchmarked for graduation theses.",
+  "main": "gqlclient.js",
+  "scripts": {
+    "start gql": "node gqlclient.js",
+    "start rest": "node restclient.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxpacs98/JSC.git"
+  },
+  "author": "Alex Bodea",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maxpacs98/JSC/issues"
+  },
+  "homepage": "https://github.com/maxpacs98/JSC#readme"
+}
