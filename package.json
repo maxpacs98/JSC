@@ -2,10 +2,10 @@
   "name": "jsc",
   "version": "1.0.0",
   "description": "Javascript clients for both servers to be benchmarked for graduation theses.",
-  "main": "gqlclient.js",
+  "main": "clients/gqlclient.js",
   "scripts": {
-    "start gql": "node gqlclient.js",
-    "start rest": "node restclient.js"
+    "gql": "node --experimental-modules clients/gqlclient.js ",
+    "rest": "node  --experimental-modules clients/restclient.js"
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/maxpacs98/JSC/issues"
   },
-  "homepage": "https://github.com/maxpacs98/JSC#readme"
+  "homepage": "https://github.com/maxpacs98/JSC#readme",
+  "dependencies": {
+    "node-fetch": "^2.6.0",
+    "require": "^2.4.20"
+  }
 }
