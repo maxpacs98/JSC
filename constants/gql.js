@@ -4,6 +4,8 @@ const getCommentsQuery = `query Comments{
       text
       id
       timestamp
+      author
+      likes
   }
 }`;
 const deleteCommentMutation = `mutation DeleteComment($commentId: ID!){ 
@@ -21,6 +23,11 @@ const bulkInsertMutation = `mutation AddComments($comments: [CommentDataInput]!)
 const deleteCommentsMutation = `mutation DeleteComments($commentIds: [ID]!){ 
     deleteComments(commentIds: $commentIds)
 }`;
+
+const clearMutation = `mutation{
+  clear
+}`;
+
 module.exports = Object.freeze({
     gqlUrl,
     getCommentsQuery,
@@ -28,5 +35,6 @@ module.exports = Object.freeze({
     addCommentMutation,
     updateCommentMutation,
     bulkInsertMutation,
-    deleteCommentsMutation
+    deleteCommentsMutation,
+    clearMutation
 });

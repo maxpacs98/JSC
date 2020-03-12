@@ -1,8 +1,9 @@
 const fetch = require('node-fetch');
 const queries = require('../constants/gql');
+const {performance} = require('perf_hooks');
 
-function fetchFromApi(query, variables) {
-    fetch(queries.gqlUrl, {
+async function fetchFromGqlApi(query, variables, timed) {
+    conf = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -11,55 +12,52 @@ function fetchFromApi(query, variables) {
         body: JSON.stringify({
             query, variables
         })
-    })
-        .then(r => r.json())
-        .then(data => console.log('data returned:', data));
+    };
+    const startTime = performance.now();
+    const result = await fetch(queries.gqlUrl, conf);
+    const endTime = performance.now();
+    if (timed === true) {
+        return endTime - startTime;
+    } else {
+        const jsRes = await result.json();
+        return jsRes.data[Object.keys(jsRes.data)[0]];
+    }
 }
 
-function getAll() {
-    fetchFromApi(queries.getCommentsQuery)
+async function getAllGql(timed) {
+    return await fetchFromGqlApi(queries.getCommentsQuery, null, timed)
 }
 
-function deleteComment(commentId) {
-    fetchFromApi(queries.deleteCommentMutation, {commentId})
+async function clearGql(timed) {
+    return await fetchFromGqlApi(queries.clearMutation, null, timed)
 }
 
-function addComment(comment) {
-    fetchFromApi(queries.addCommentMutation, {comment})
+async function deleteCommentGql(commentId, timed) {
+    return await fetchFromGqlApi(queries.deleteCommentMutation, {commentId}, timed)
 }
 
-function updateComment(id, text, likes, author) {
-    fetchFromApi(queries.updateCommentMutation, {id, text, likes, author})
+async function addCommentGql(comment, timed) {
+    return await fetchFromGqlApi(queries.addCommentMutation, {comment}, timed)
 }
 
-function addComments(comments) {
-    fetchFromApi(queries.bulkInsertMutation, {comments})
+async function updateCommentGql(text, likes, author, id, timed) {
+    return await fetchFromGqlApi(queries.updateCommentMutation, {id, text, likes, author}, timed)
 }
 
-function deleteComments(commentIds) {
-    fetchFromApi(queries.deleteCommentsMutation, {commentIds})
+async function addCommentsGql(comments, timed) {
+    return await fetchFromGqlApi(queries.bulkInsertMutation, {comments}, timed)
 }
 
-// getAll();
-// deleteComment("NWU0YzI0Njg2OWQ4ZmFiNTY3OTVkODY5");
-// addComment({text: "This is a JSC comm", likes: 10, author: "a"});
-// updateComment("NWU1Yjk5M2UwZDJjZTA0YTUyYjQ4YmMw", "This is an updated JSC comm", 100, "a");
-// const comments = [
-//     {
-//         text: "This is the first JSC bulk mutation comm",
-//         likes: 10,
-//         author: "ale"
-//     },
-//     {
-//         text: "This is the second JSC bulk mutation comm",
-//         likes: 10,
-//         author: "ale"
-//     },
-//     {
-//         text: "This is the third JSC bulk mutation comm",
-//         likes: 10,
-//         author: "ale"
-//     }
-// ];
-// addComments(comments);
-// deleteComments(["NWU1YmEyNWMzZTg5N2ExOGZjYjNiYTJk", "NWU1YmEyNWMzZTg5N2ExOGZjYjNiYTJl"]);
+async function deleteCommentsGql(commentIds, timed) {
+    return await fetchFromGqlApi(queries.deleteCommentsMutation, {commentIds}, timed)
+}
+
+module.exports = Object.freeze({
+    getAllGql,
+    addCommentGql,
+    updateCommentGql,
+    deleteCommentGql,
+    addCommentsGql,
+    deleteCommentsGql,
+    clearGql
+});

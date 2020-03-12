@@ -1,46 +1,62 @@
 const fetch = require('node-fetch');
 const constants = require('../constants/rest');
+const {performance} = require('perf_hooks');
 
-function fetchFromApi(endpoint, method, data) {
+async function fetchFromRestApi(endpoint, method, data, timed) {
     let conf = {
         method: method,
         headers: {
             'Content-Type': 'application/json',
         },
     };
-    if (data !== null) {
+    if (method !== "GET" && data != null) {
         conf.body = JSON.stringify(data);
     }
-    fetch(`${constants.restUrl}/${endpoint}`, conf)
-        .then(r => r.json())
-        .then(resp => console.log('data returned:', resp));
+    const startTime = performance.now();
+    const result = await fetch(`${constants.restUrl}/${endpoint}`, conf);
+    const endTime = performance.now();
+    if (timed === true) {
+        return endTime - startTime;
+    } else {
+        return await result.json();
+    }
+
 }
 
-function getAll() {
-    fetchFromApi("comments", "GET")
+async function getAllRest(timed) {
+    return await fetchFromRestApi("comments", "GET", null, timed);
 }
 
-function addComment(comment) {
-    fetchFromApi("comments", "POST", comment)
+async function clearRest(timed) {
+    return await fetchFromRestApi("comments/clear", "DELETE", null, timed);
 }
 
-function deleteComment(commentId) {
-    fetchFromApi(`comments/${commentId}`, "DELETE")
+async function addCommentRest(comment, timed) {
+    return await fetchFromRestApi("comments", "POST", comment, timed);
 }
 
-function updateComment(id, comment) {
-    fetchFromApi(`comments/${id}`, "PUT", comment)
+async function deleteCommentRest(commentId, timed) {
+    return await fetchFromRestApi(`comments/${commentId}`, "DELETE", null, timed);
 }
 
-function addComments(comments) {
-    fetchFromApi(`comments/bulk`, "POST", comments)
+async function updateCommentRest(id, comment, timed) {
+    return await fetchFromRestApi(`comments/${id}`, "PUT", comment, timed);
 }
 
-function deleteComments(commentIds) {
-    fetchFromApi(`comments/delete`, "DELETE", commentIds)
+async function addCommentsRest(comments, timed) {
+    return await fetchFromRestApi(`comments/bulk`, "POST", comments, timed);
 }
 
-// getAll();
-// addComment({text: "This is a rest client comment", likes: 200, author: "LSADLKJA"});
-// deleteComment(4);
-// updateComment(5, {text: "This is an updated comment from JSSC", likes: 10, author: "Ale"});
+async function deleteCommentsRest(commentIds, timed) {
+    return await fetchFromRestApi(`comments/delete`, "DELETE", commentIds, timed);
+}
+
+module.exports = Object.freeze({
+    getAllRest,
+    addCommentRest,
+    updateCommentRest,
+    deleteCommentRest,
+    addCommentsRest,
+    deleteCommentsRest,
+    clearRest
+});
