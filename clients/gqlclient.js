@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 const queries = require('../constants/gql');
-const {performance} = require('perf_hooks');
+const { performance } = require('perf_hooks');
 
 async function fetchFromGqlApi(query, variables, timed) {
     conf = {
@@ -24,12 +24,16 @@ async function fetchFromGqlApi(query, variables, timed) {
     }
 }
 
-async function getAllGql(timed) {
+async function getAllCommentsGql(timed) {
     return await fetchFromGqlApi(queries.getCommentsQuery, null, timed)
 }
 
-async function clearGql(timed) {
-    return await fetchFromGqlApi(queries.clearMutation, null, timed)
+async function getOneCommentGql(commentId, timed) {
+    return await fetchFromGqlApi(queries.getCommentQuery, {commentId}, timed)
+}
+
+async function clearCommentsGql(timed) {
+    return await fetchFromGqlApi(queries.clearCommentsMutation, null, timed)
 }
 
 async function deleteCommentGql(commentId, timed) {
@@ -45,19 +49,40 @@ async function updateCommentGql(text, likes, author, id, timed) {
 }
 
 async function addCommentsGql(comments, timed) {
-    return await fetchFromGqlApi(queries.bulkInsertMutation, {comments}, timed)
+    return await fetchFromGqlApi(queries.bulkInsertCommentsMutation, {comments}, timed)
 }
 
 async function deleteCommentsGql(commentIds, timed) {
     return await fetchFromGqlApi(queries.deleteCommentsMutation, {commentIds}, timed)
 }
 
+async function getAllPostsGql(timed) {
+    return await fetchFromGqlApi(queries.getAllPostsQuery, null, timed)
+}
+
+async function clearPostsGql(timed) {
+    return await fetchFromGqlApi(queries.clearPostsMutation, null, timed)
+}
+
+async function addPostsGql(posts, timed) {
+    return await fetchFromGqlApi(queries.bulkInsertPostsMutation, {posts}, timed)
+}
+
+async function addPostGql(post, timed) {
+    return await fetchFromGqlApi(queries.addPostMutation, {post}, timed)
+}
+
 module.exports = Object.freeze({
-    getAllGql,
+    getAllCommentsGql,
     addCommentGql,
     updateCommentGql,
     deleteCommentGql,
     addCommentsGql,
     deleteCommentsGql,
-    clearGql
+    clearCommentsGql,
+    getOneCommentGql,
+    getAllPostsGql,
+    clearPostsGql,
+    addPostsGql,
+    addPostGql
 });

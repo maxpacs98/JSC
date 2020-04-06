@@ -1,10 +1,9 @@
 const rest = require('../clients/restclient');
 const gql = require('../clients/gqlclient');
-const {CommentInput} = require('../models/socialmedia');
-const {generateComments} = require("./mock");
+const { generateComments } = require("./mock");
 
 const defaultArguments = [true];
-const iterations = 100;
+const iterations = 2;
 
 async function calculateMean(fun, arguments, type, auxiliary, clear) {
     let time = 0;
@@ -42,20 +41,20 @@ async function benchmark(restParams, gqlParams, auxiliaryParams, clearParams) {
     return {rest: timeRest / iterations, gql: timeGql / iterations}
 }
 
-function benchmarkAdd() {
-    const comment = generateComments(1);
+function benchmarkAdd(generateFunction, restFunction, gqlFunction, clearRest, clearGql) {
+    const comment = generateFunction(1);
     benchmark({
-            restFun: rest.addCommentRest,
+            restFun: restFunction,
             argumentsRest: [comment]
         },
         {
-            gqlFun: gql.addCommentGql,
+            gqlFun: gqlFunction,
             argumentsGql: [comment]
         },
         null,
         {
-            clearGqlFun: gql.clearGql, // TODO: Be careful with this when big data arises
-            clearRestFun: rest.clearRest
+            clearGqlFun: clearRest, // TODO: Be careful with this when big data arises
+            clearRestFun: clearGql
         }
     )
         .then(res => {
@@ -64,14 +63,35 @@ function benchmarkAdd() {
         });
 }
 
-function benchmarkGetAll() {
+function benchmarkGetAll(restFun, gqlFun) {
     benchmark({
-            restFun: rest.getAllRest,
+            restFun: restFun,
             argumentsRest: []
         },
         {
-            gqlFun: gql.getAllGql,
+            gqlFun: gqlFun,
             argumentsGql: []
+        })
+        .then(res => {
+            console.log(res);
+            console.log("Finished, all good");
+        });
+}
+
+function benchmarkGetOne() {
+    let comment = generateComments(1);
+
+    benchmark({
+            restFun: rest.getOneCommentRest,
+            argumentsRest: [comment]
+        },
+        {
+            gqlFun: gql.getOneCommentGql,
+            argumentsGql: [comment]
+        },
+        {
+            restAuxFun: rest.addCommentRest,
+            gqlAuxFun: gql.addCommentGql
         })
         .then(res => {
             console.log(res);
@@ -96,8 +116,8 @@ async function benchmarkUpdate() {
             argumentsGql: [...Object.values(comment)]
         });
     console.log(result);
-    await rest.deleteCommentRest(idRest);
-    await gql.deleteCommentGql(idGql);
+    // await rest.deleteCommentRest(idRest);
+    // await gql.deleteCommentGql(idGql);
     console.log("Cleaned up the comments. All good!");
 }
 
@@ -121,25 +141,26 @@ function benchmarkDelete() {
         });
 }
 
-function benchmarkBulkAdd() {
-    const comments = generateComments(5000);
+function benchmarkBulkAdd(generateFunction, restFunction, gqlFunction, clearRest, clearGql) {
+    const comments = generateFunction(100);
     benchmark({
-            restFun: rest.addCommentsRest,
+            restFun: restFunction,
             argumentsRest: [comments]
         },
         {
-            gqlFun: gql.addCommentsGql,
+            gqlFun: gqlFunction,
             argumentsGql: [comments]
         },
-        null,
-        {
-            clearGqlFun: gql.clearGql, // TODO: Be careful with this when big data arises
-            clearRestFun: rest.clearRest
-        }
-    ).then(res => {
-        console.log(res);
-        console.log("All cleaned up!");
-    })
+        // null,
+        // {
+        //     clearGqlFun: clearGql, // TODO: Be careful with this when big data arises
+        //     clearRestFun: clearRest
+        // }
+    )
+        .then(res => {
+            console.log(res);
+            console.log("All cleaned up!");
+        })
 }
 
 function benchmarkBulkDelete() {
@@ -162,11 +183,12 @@ function benchmarkBulkDelete() {
         });
 }
 
+module.exports = Object.freeze(
+    {
+        benchmark,
+        benchmarkGetAll,
+        benchmarkAdd,
+        benchmarkBulkAdd
+    }
+);
 
-// benchmarkAdd();
-// benchmarkGetAll();
-// benchmarkUpdate().then();
-
-// benchmarkDelete();
-// benchmarkBulkAdd();
-// benchmarkBulkDelete();

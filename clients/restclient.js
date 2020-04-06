@@ -23,11 +23,15 @@ async function fetchFromRestApi(endpoint, method, data, timed) {
 
 }
 
-async function getAllRest(timed) {
+async function getAllCommentsRest(timed) {
     return await fetchFromRestApi("comments", "GET", null, timed);
 }
 
-async function clearRest(timed) {
+async function getOneCommentRest(commentId, timed) {
+    return await fetchFromRestApi(`comments/${commentId}`, "GET", null, timed);
+}
+
+async function clearCommentsRest(timed) {
     return await fetchFromRestApi("comments/clear", "DELETE", null, timed);
 }
 
@@ -51,12 +55,34 @@ async function deleteCommentsRest(commentIds, timed) {
     return await fetchFromRestApi(`comments/delete`, "DELETE", commentIds, timed);
 }
 
+// POSTS
+async function getAllPostsRest(timed) {
+    return await fetchFromRestApi("posts", "GET", null, timed);
+}
+
+async function clearPostsRest(timed) {
+    return await fetchFromRestApi("posts/clear", "DELETE", null, timed);
+}
+
+async function addPostsRest(posts, timed) {
+    return await fetchFromRestApi(`posts/bulk`, "POST", posts, timed);
+}
+
+async function addPostRest(post, timed) {
+    return await fetchFromRestApi("posts", "POST", post, timed);
+}
+
 module.exports = Object.freeze({
-    getAllRest,
+    getAllCommentsRest,
     addCommentRest,
     updateCommentRest,
     deleteCommentRest,
     addCommentsRest,
     deleteCommentsRest,
-    clearRest
+    clearCommentsRest,
+    getOneCommentRest,
+    getAllPostsRest,
+    clearPostsRest,
+    addPostsRest,
+    addPostRest
 });

@@ -26,7 +26,19 @@ class Comment extends CommentInput {
     }
 }
 
+class PostInput {
+    constructor(text, likes, author, deleted, comments) {
+        this.text = text;
+        this.likes = likes;
+        this.author = author;
+        this.deleted = deleted;
+        this.commentsInput = comments;
+    }
+}
+
+
 module.exports = Object.freeze({
     CommentInput,
-    Comment
+    Comment,
+    PostInput
 });
