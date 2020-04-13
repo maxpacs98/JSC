@@ -72,6 +72,10 @@ async function addPostGql(post, timed) {
     return await fetchFromGqlApi(queries.addPostMutation, {post}, timed)
 }
 
+async function updatePostCommentGql(postId, commentId, text, author, likes, timed) {
+    return await fetchFromGqlApi(queries.updatePostCommentMutation, {postId, commentId, text, author, likes}, timed)
+}
+
 module.exports = Object.freeze({
     getAllCommentsGql,
     addCommentGql,
@@ -84,5 +88,6 @@ module.exports = Object.freeze({
     getAllPostsGql,
     clearPostsGql,
     addPostsGql,
-    addPostGql
+    addPostGql,
+    updatePostCommentGql
 });

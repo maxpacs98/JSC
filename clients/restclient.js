@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 const constants = require('../constants/rest');
-const {performance} = require('perf_hooks');
+const { performance } = require('perf_hooks');
 
 async function fetchFromRestApi(endpoint, method, data, timed) {
     let conf = {
@@ -20,7 +20,6 @@ async function fetchFromRestApi(endpoint, method, data, timed) {
     } else {
         return await result.json();
     }
-
 }
 
 async function getAllCommentsRest(timed) {
@@ -72,6 +71,10 @@ async function addPostRest(post, timed) {
     return await fetchFromRestApi("posts", "POST", post, timed);
 }
 
+async function updatePostCommentRest(postId, comment, timed) {
+    return await fetchFromRestApi(`posts/${postId}`, "PUT", comment, timed);
+}
+
 module.exports = Object.freeze({
     getAllCommentsRest,
     addCommentRest,
@@ -84,5 +87,6 @@ module.exports = Object.freeze({
     getAllPostsRest,
     clearPostsRest,
     addPostsRest,
-    addPostRest
+    addPostRest,
+    updatePostCommentRest
 });

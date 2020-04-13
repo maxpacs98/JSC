@@ -46,19 +46,8 @@ const clearCommentsMutation = `mutation{
 
 const getAllPostsQuery = `query Posts{ 
   posts{
-      text
       id
-      timestamp
-      author
-      likes
-      deleted
-      comments {
-            text
-            id
-            timestamp
-            author
-            likes
-      }
+      text
   }
 }`;
 
@@ -74,6 +63,10 @@ const addPostMutation = `mutation AddPost($post: PostDataInput!){
     addPost(post: $post)
 }`;
 
+const updatePostCommentMutation = `mutation updatePostComment($postId: ID!, $commentId: ID!, $text: String!, $likes: Int!, $author: String!){ 
+    updatePostComment(postId: $postId, commentId: $commentId, text: $text, likes: $likes, author: $author)
+}`;
+
 module.exports = Object.freeze({
     gqlUrl,
     getCommentsQuery,
@@ -87,5 +80,6 @@ module.exports = Object.freeze({
     getAllPostsQuery,
     clearPostsMutation,
     bulkInsertPostsMutation,
-    addPostMutation
+    addPostMutation,
+    updatePostCommentMutation
 });
