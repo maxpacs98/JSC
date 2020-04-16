@@ -48,6 +48,13 @@ const getAllPostsQuery = `query Posts{
   posts{
       id
       text
+      comments {
+        id
+        text
+        author
+        likes
+        timestamp
+      }
   }
 }`;
 

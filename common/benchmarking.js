@@ -3,7 +3,7 @@ const gql = require('../clients/gqlclient');
 const { generateComments } = require("./mock");
 
 const defaultArguments = [true];
-const iterations = 1;
+const iterations = 10;
 
 async function calculateMean(fun, arguments, type, auxiliary, clear) {
     let time = 0;
@@ -187,7 +187,7 @@ async function benchmarkUpdateNested(restFunction, gqlFunction) {
     const postsRest = await rest.getAllPostsRest();
     const postsGQL = await gql.getAllPostsGql();
     let commToUpdateRest = postsRest[0].comments[2];
-    let commToUpdateGql = postsGQL[0].comments[0];
+    let commToUpdateGql = postsGQL[0].comments[2];
     delete commToUpdateRest["timestamp"];
     delete commToUpdateGql["timestamp"];
     const result = await benchmark({

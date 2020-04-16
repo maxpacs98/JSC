@@ -16,13 +16,11 @@ function benchmarkBulkAddPosts() {
 }
 
 function benchmarkUpdatePostComment() {
-    benchmarkUpdateNested(rest.updatePostCommentRest, gql.updatePostCommentGql).then(
-        console.log('plm')
-    );
+    benchmarkUpdateNested(rest.updatePostCommentRest, gql.updatePostCommentGql).then();
 }
 
 
-benchmarkGetAllPosts();
+// benchmarkGetAllPosts();
 // benchmarkAddPost();
 // benchmarkBulkAddPosts();
-// benchmarkUpdatePostComment();
+benchmarkUpdatePostComment();
