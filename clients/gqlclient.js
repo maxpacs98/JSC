@@ -1,9 +1,11 @@
-const fetch = require('node-fetch');
-const queries = require('../constants/gql');
-const { performance } = require('perf_hooks');
+// const fetch = require('node-fetch');
+// const queries = require('../constants/gql');
+// const { performance } = require('perf_hooks');
+
+import * as queries from "../constants/gql.js";
 
 async function fetchFromGqlApi(query, variables, timed) {
-    conf = {
+    const conf = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -76,18 +78,20 @@ async function updatePostCommentGql(postId, commentId, text, author, likes, time
     return await fetchFromGqlApi(queries.updatePostCommentMutation, {postId, commentId, text, author, likes}, timed)
 }
 
-module.exports = Object.freeze({
-    getAllCommentsGql,
-    addCommentGql,
-    updateCommentGql,
-    deleteCommentGql,
-    addCommentsGql,
-    deleteCommentsGql,
-    clearCommentsGql,
-    getOneCommentGql,
-    getAllPostsGql,
-    clearPostsGql,
-    addPostsGql,
-    addPostGql,
-    updatePostCommentGql
-});
+// module.exports = Object.freeze({
+//     getAllCommentsGql,
+//     addCommentGql,
+//     updateCommentGql,
+//     deleteCommentGql,
+//     addCommentsGql,
+//     deleteCommentsGql,
+//     clearCommentsGql,
+//     getOneCommentGql,
+//     getAllPostsGql,
+//     clearPostsGql,
+//     addPostsGql,
+//     addPostGql,
+//     updatePostCommentGql
+// });
+
+export { getAllPostsGql };

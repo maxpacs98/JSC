@@ -1,6 +1,10 @@
-const fetch = require('node-fetch');
-const constants = require('../constants/rest');
-const { performance } = require('perf_hooks');
+// const fetch = require('node-fetch');
+// const { performance } = require('perf_hooks');
+// import { fetch } from 'fetch';
+// import { performance } from '../node_modules/';
+
+import { restUrl } from "../constants/rest.js";
+
 
 async function fetchFromRestApi(endpoint, method, data, timed) {
     let conf = {
@@ -13,7 +17,7 @@ async function fetchFromRestApi(endpoint, method, data, timed) {
         conf.body = JSON.stringify(data);
     }
     const startTime = performance.now();
-    const result = await fetch(`${constants.restUrl}/${endpoint}`, conf);
+    const result = await fetch(`${restUrl}/${endpoint}`, conf);
     const endTime = performance.now();
     if (timed === true) {
         return endTime - startTime;
@@ -75,18 +79,20 @@ async function updatePostCommentRest(postId, comment, timed) {
     return await fetchFromRestApi(`posts/${postId}`, "PUT", comment, timed);
 }
 
-module.exports = Object.freeze({
-    getAllCommentsRest,
-    addCommentRest,
-    updateCommentRest,
-    deleteCommentRest,
-    addCommentsRest,
-    deleteCommentsRest,
-    clearCommentsRest,
-    getOneCommentRest,
-    getAllPostsRest,
-    clearPostsRest,
-    addPostsRest,
-    addPostRest,
-    updatePostCommentRest
-});
+// module.exports = Object.freeze({
+//     getAllCommentsRest,
+//     addCommentRest,
+//     updateCommentRest,
+//     deleteCommentRest,
+//     addCommentsRest,
+//     deleteCommentsRest,
+//     clearCommentsRest,
+//     getOneCommentRest,
+//     getAllPostsRest,
+//     clearPostsRest,
+//     addPostsRest,
+//     addPostRest,
+//     updatePostCommentRest
+// });
+
+export {getAllPostsRest};

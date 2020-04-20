@@ -1,3 +1,7 @@
+import { getAllPostsRest } from "../clients/restclient.js";
+import { benchmarkGetAll } from "../common/benchmarking.js"
+import { getAllPostsGql } from "../clients/gqlclient.js";
+
 const commonOptions = {
     scales: {
         yAxes: [{
@@ -10,6 +14,7 @@ const commonOptions = {
         enabled: false
     }
 };
+
 window.onload = function () {
     const testChartInstance = new Chart(document.getElementById("testChart"), {
         type: 'line',
@@ -17,13 +22,11 @@ window.onload = function () {
             labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             datasets: [{
                 label: "Geek",
-                data: [30.22, 7.86, 8.56, 8.98, 9.23, 8.44, 11.22, 12.10, 8.23, 9.21],
                 fill: false,
                 borderColor: '#FF6F61',
                 borderWidth: 2
             }, {
                 label: "Hipster",
-                data: [6.23, 7.11, 9.22, 6.78, 7.77, 8.30, 5.22, 6, 6.12, 9.30],
                 fill: false,
                 borderColor: '#6B5B95',
                 borderWidth: 2
@@ -32,9 +35,19 @@ window.onload = function () {
         options: Object.assign({}, commonOptions, {
             title: {
                 display: true,
-                text: "Get All 1st Modelling",
+                text: "Get All 2nd Modelling",
                 fontSize: 18
             }
         })
     });
+
+    const startAllButton = document.getElementById("startAll");
+    startAllButton.onclick = async function () {
+        let generator = benchmarkGetAll(getAllPostsRest, getAllPostsGql);
+        for await (let iteration of generator) {
+            testChartInstance.data.datasets[0].data.push(iteration.restResult.value)
+            testChartInstance.data.datasets[1].data.push(iteration.gqlResult.value)
+            testChartInstance.update();
+        }
+    }
 }

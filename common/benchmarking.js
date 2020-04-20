@@ -1,44 +1,53 @@
-const rest = require('../clients/restclient');
-const gql = require('../clients/gqlclient');
-const { generateComments } = require("./mock");
+// const rest = require('../clients/restclient');
+// const gql = require('../clients/gqlclient');
+// const { generateComments } = require("./mock");
 
 const defaultArguments = [true];
-const iterations = 1;
+const iterations = 100;
 
-async function calculateMean(fun, arguments, type, auxiliary, clear) {
-    let time = 0;
-    const copyArg = arguments;
+async function* calculateMean(fun, argz, type, auxiliary, clear) {
+    // let time = 0;
+    const copyArg = argz;
     for (let i = 0; i < iterations; i++) {
         if (auxiliary) {
-            arguments = [await auxiliary(...copyArg)];
+            argz = [await auxiliary(...copyArg)];
         }
-        const t = await fun(...[...arguments, ...defaultArguments]);
+        const t = await fun(...[...argz, ...defaultArguments]);
+        yield t;
         console.log(`This ${type} iteration was done in: ${t}`);
-        time += t;
+        // time += t;
         if (clear) {
             await clear(...defaultArguments);
         }
-        await new Promise(r => setTimeout(r, 1000));
+        // await new Promise(r => setTimeout(r, 500));
     }
-    console.log(`The ${type} ${iterations} finished in ${time / iterations}`);
-    return time;
+    // console.log(`The ${type} ${iterations} finished in ${time / iterations}`);
+    // return time;
 }
 
-async function benchmark(restParams, gqlParams, auxiliaryParams, clearParams) {
+async function* benchmark(restParams, gqlParams, auxiliaryParams, clearParams) {
     const { restFun, argumentsRest } = restParams;
     const { gqlFun, argumentsGql } = gqlParams;
     const { gqlAuxFun, restAuxFun } = auxiliaryParams || {};
     const { clearRestFun, clearGqlFun } = clearParams || {};
 
-    console.log(`Starting benchmarking for rest`);
-    const timeRest = await calculateMean(restFun, argumentsRest, "rest", restAuxFun, clearRestFun);
+    console.log(`Starting benchmarking`);
+    let rest = calculateMean(restFun, argumentsRest, "rest", restAuxFun, clearRestFun);
+    let gql = calculateMean(gqlFun, argumentsGql, "gql", gqlAuxFun, clearGqlFun);
 
-    await new Promise(r => setTimeout(r, 1000));
+    let restResult = await rest.next();
+    let gqlResult = await gql.next();
+    while(!restResult.done || !gqlResult.done) {
+        yield {restResult, gqlResult}
+        restResult = await rest.next();
+        gqlResult = await gql.next();
+    }
 
-    console.log(`Starting benchmarking for Gql`);
-    const timeGql = await calculateMean(gqlFun, argumentsGql, "gql", gqlAuxFun, clearGqlFun);
+    // await new Promise(r => setTimeout(r, 1000));
 
-    return {rest: timeRest / iterations, gql: timeGql / iterations}
+    // console.log(`Starting benchmarking for Gql`);
+
+    // return {rest: timeRest / iterations, gql: timeGql / iterations}
 }
 
 function benchmarkAdd(generateFunction, restFunction, gqlFunction, clearRest, clearGql) {
@@ -63,8 +72,8 @@ function benchmarkAdd(generateFunction, restFunction, gqlFunction, clearRest, cl
         });
 }
 
-function benchmarkGetAll(restFun, gqlFun) {
-    benchmark({
+export async function * benchmarkGetAll(restFun, gqlFun) {
+    let gen = benchmark({
             restFun: restFun,
             argumentsRest: []
         },
@@ -72,10 +81,10 @@ function benchmarkGetAll(restFun, gqlFun) {
             gqlFun: gqlFun,
             argumentsGql: []
         })
-        .then(res => {
-            console.log(res);
-            console.log("Finished, all good");
-        });
+    for await (let value of gen) {
+        console.log("Benchmark get all", value);
+        yield value;
+    }
 }
 
 function benchmarkGetOne() {
@@ -204,12 +213,12 @@ async function benchmarkUpdateNested(restFunction, gqlFunction) {
     console.log("Cleaned up the comments. All good!");
 }
 
-module.exports = Object.freeze(
-    {
-        benchmarkGetAll,
-        benchmarkAdd,
-        benchmarkBulkAdd,
-        benchmarkUpdateNested
-    }
-);
+// module.exports = Object.freeze(
+//     {
+//         benchmarkGetAll,
+//         benchmarkAdd,
+//         benchmarkBulkAdd,
+//         benchmarkUpdateNested
+//     }
+// );
 

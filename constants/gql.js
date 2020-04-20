@@ -1,6 +1,6 @@
-const gqlUrl = 'http://localhost:8000/graphql';
+export const gqlUrl = 'http://localhost:8000/graphql';
 
-const getCommentsQuery = `query Comments{ 
+export const getCommentsQuery = `query Comments{ 
   comments{
       text
       id
@@ -10,7 +10,7 @@ const getCommentsQuery = `query Comments{
   }
 }`;
 
-const getCommentQuery = `query Comment($commentId: ID!){ 
+export const getCommentQuery = `query Comment($commentId: ID!){ 
   comment(commentId: $commentId){
       text
       id
@@ -20,66 +20,66 @@ const getCommentQuery = `query Comment($commentId: ID!){
   }
 }`;
 
-const deleteCommentMutation = `mutation DeleteComment($commentId: ID!){ 
+export const deleteCommentMutation = `mutation DeleteComment($commentId: ID!){ 
     deleteComment(commentId: $commentId)
 }`;
 
-const addCommentMutation = `mutation AddComment($comment: CommentDataInput!){ 
+export const addCommentMutation = `mutation AddComment($comment: CommentDataInput!){ 
     addComment(comment: $comment)
 }`;
 
-const updateCommentMutation = `mutation UpdateComment($id: ID!, $text: String!, $likes: Int!, $author: String!){ 
+export const updateCommentMutation = `mutation UpdateComment($id: ID!, $text: String!, $likes: Int!, $author: String!){ 
     updateComment(id: $id, text: $text, likes: $likes, author: $author)
 }`;
 
-const bulkInsertCommentsMutation = `mutation AddComments($comments: [CommentDataInput]!){ 
+export const bulkInsertCommentsMutation = `mutation AddComments($comments: [CommentDataInput]!){ 
     addComments(comments: $comments)
 }`;
 
-const deleteCommentsMutation = `mutation DeleteComments($commentIds: [ID]!){ 
+export const deleteCommentsMutation = `mutation DeleteComments($commentIds: [ID]!){ 
     deleteComments(commentIds: $commentIds)
 }`;
 
-const clearCommentsMutation = `mutation{
+export const clearCommentsMutation = `mutation{
   clearComments
 }`;
 
-const getAllPostsQuery = `query Posts{ 
+export const getAllPostsQuery = `query Posts{ 
   posts{
       id
       text
   }
 }`;
 
-const clearPostsMutation = `mutation{
+export const clearPostsMutation = `mutation{
   clearPosts
 }`;
 
-const bulkInsertPostsMutation = `mutation AddPosts($posts: [PostDataInput]!){ 
+export const bulkInsertPostsMutation = `mutation AddPosts($posts: [PostDataInput]!){ 
     addPosts(posts: $posts)
 }`;
 
-const addPostMutation = `mutation AddPost($post: PostDataInput!){ 
+export const addPostMutation = `mutation AddPost($post: PostDataInput!){ 
     addPost(post: $post)
 }`;
 
-const updatePostCommentMutation = `mutation updatePostComment($postId: ID!, $commentId: ID!, $text: String!, $likes: Int!, $author: String!){ 
+export const updatePostCommentMutation = `mutation updatePostComment($postId: ID!, $commentId: ID!, $text: String!, $likes: Int!, $author: String!){ 
     updatePostComment(postId: $postId, commentId: $commentId, text: $text, likes: $likes, author: $author)
 }`;
 
-module.exports = Object.freeze({
-    gqlUrl,
-    getCommentsQuery,
-    deleteCommentMutation,
-    addCommentMutation,
-    updateCommentMutation,
-    bulkInsertCommentsMutation,
-    deleteCommentsMutation,
-    clearCommentsMutation,
-    getCommentQuery,
-    getAllPostsQuery,
-    clearPostsMutation,
-    bulkInsertPostsMutation,
-    addPostMutation,
-    updatePostCommentMutation
-});
+// module.exports = Object.freeze({
+//     gqlUrl,
+//     getCommentsQuery,
+//     deleteCommentMutation,
+//     addCommentMutation,
+//     updateCommentMutation,
+//     bulkInsertCommentsMutation,
+//     deleteCommentsMutation,
+//     clearCommentsMutation,
+//     getCommentQuery,
+//     getAllPostsQuery,
+//     clearPostsMutation,
+//     bulkInsertPostsMutation,
+//     addPostMutation,
+//     updatePostCommentMutation
+// });
