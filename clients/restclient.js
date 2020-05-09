@@ -1,8 +1,3 @@
-// const fetch = require('node-fetch');
-// const { performance } = require('perf_hooks');
-// import { fetch } from 'fetch';
-// import { performance } from '../node_modules/';
-
 import { restUrl } from "../constants/rest.js";
 
 
@@ -26,73 +21,56 @@ async function fetchFromRestApi(endpoint, method, data, timed) {
     }
 }
 
-async function getAllCommentsRest(timed) {
+export async function getAllCommentsRest(timed) {
     return await fetchFromRestApi("comments", "GET", null, timed);
 }
 
-async function getOneCommentRest(commentId, timed) {
+export async function getOneCommentRest(commentId, timed) {
     return await fetchFromRestApi(`comments/${commentId}`, "GET", null, timed);
 }
 
-async function clearCommentsRest(timed) {
+export async function clearCommentsRest(timed) {
     return await fetchFromRestApi("comments/clear", "DELETE", null, timed);
 }
 
-async function addCommentRest(comment, timed) {
+export async function addCommentRest(comment, timed) {
     return await fetchFromRestApi("comments", "POST", comment, timed);
 }
 
-async function deleteCommentRest(commentId, timed) {
+export async function deleteCommentRest(commentId, timed) {
     return await fetchFromRestApi(`comments/${commentId}`, "DELETE", null, timed);
 }
 
-async function updateCommentRest(id, comment, timed) {
+export async function updateCommentRest(id, comment, timed) {
     return await fetchFromRestApi(`comments/${id}`, "PUT", comment, timed);
 }
 
-async function addCommentsRest(comments, timed) {
+export async function addCommentsRest(comments, timed) {
     return await fetchFromRestApi(`comments/bulk`, "POST", comments, timed);
 }
 
-async function deleteCommentsRest(commentIds, timed) {
+export async function deleteCommentsRest(commentIds, timed) {
     return await fetchFromRestApi(`comments/delete`, "DELETE", commentIds, timed);
 }
 
 // POSTS
-async function getAllPostsRest(timed) {
+export async function getAllPostsRest(timed) {
     return await fetchFromRestApi("posts", "GET", null, timed);
 }
 
-async function clearPostsRest(timed) {
+export async function clearPostsRest(timed) {
     return await fetchFromRestApi("posts/clear", "DELETE", null, timed);
 }
 
-async function addPostsRest(posts, timed) {
+export async function addPostsRest(posts, timed) {
     return await fetchFromRestApi(`posts/bulk`, "POST", posts, timed);
 }
 
-async function addPostRest(post, timed) {
+export async function addPostRest(post, timed) {
     return await fetchFromRestApi("posts", "POST", post, timed);
 }
 
-async function updatePostCommentRest(postId, comment, timed) {
+export async function updatePostCommentRest(postId, comment, timed) {
     return await fetchFromRestApi(`posts/${postId}`, "PUT", comment, timed);
 }
 
-// module.exports = Object.freeze({
-//     getAllCommentsRest,
-//     addCommentRest,
-//     updateCommentRest,
-//     deleteCommentRest,
-//     addCommentsRest,
-//     deleteCommentsRest,
-//     clearCommentsRest,
-//     getOneCommentRest,
-//     getAllPostsRest,
-//     clearPostsRest,
-//     addPostsRest,
-//     addPostRest,
-//     updatePostCommentRest
-// });
-
-export {getAllPostsRest};

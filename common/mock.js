@@ -1,7 +1,9 @@
-const {CommentInput, PostInput} = require('../models/socialmedia');
-const faker = require("faker");
+import { CommentInput, PostInput } from "../models/socialmedia.js";
+// import faker from "../node_modules/faker.js";
+// const {CommentInput, PostInput} = require('../models/socialmedia');
+// const faker = require("faker");
 
-function generateComments(number) {
+export function generateComments(number) {
     let comments = [];
     for (let i = 0; i < number; i++) {
         const text = faker.lorem.text();
@@ -11,7 +13,7 @@ function generateComments(number) {
     return number === 1 ? comments[0] : comments
 }
 
-function generatePosts(number) {
+export function generatePosts(number) {
     let posts = [];
     for (let i = 0; i < number; i++) {
         const text = faker.lorem.text();
@@ -22,7 +24,7 @@ function generatePosts(number) {
     return number === 1 ? posts[0] : posts
 }
 
-module.exports = Object.freeze({
-    generateComments,
-    generatePosts
-});
+// module.exports = Object.freeze({
+//     generateComments,
+//     generatePosts
+// });

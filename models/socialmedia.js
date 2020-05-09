@@ -1,4 +1,4 @@
-class CommentInput {
+export class CommentInput {
     constructor(text, likes, author) {
         this.text = text;
         this.likes = likes;
@@ -6,7 +6,7 @@ class CommentInput {
     }
 }
 
-class Comment extends CommentInput {
+export class Comment extends CommentInput {
     constructor(id, text, likes, author, timestamp) {
         super(text, likes, author);
         this._id = id;
@@ -26,7 +26,7 @@ class Comment extends CommentInput {
     }
 }
 
-class PostInput {
+export class PostInput {
     constructor(text, likes, author, deleted, comments) {
         this.text = text;
         this.likes = likes;
@@ -35,10 +35,3 @@ class PostInput {
         this.commentsInput = comments;
     }
 }
-
-
-module.exports = Object.freeze({
-    CommentInput,
-    Comment,
-    PostInput
-});

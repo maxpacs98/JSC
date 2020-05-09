@@ -4,15 +4,62 @@
     <meta charset="UTF-8">
     <title>Comparison Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js" type="text/javascript"></script>
     <script type="module" src="graphs.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-<div>
-        <a id="startAll">Initiate all</a>
-</div>
-<div class="test" style="width: 30%">
-    <canvas id="testChart"></canvas>
-</div>
+<!--    <div>-->
+<!--        <a id="startAll">Initiate all</a>-->
+<!--    </div>-->
+<header>
+    <h1>Comparison Dashboard</h1>
+
+    <div class="buttonsContainer">
+        <button id="launchButton" class="button">Launch All</button>
+        <button id="resetButton" class="button">Reset</button>
+        <div>
+            <img src="./assets/next.svg" alt="next" class="pageButton">
+        </div>
+        <div class="hidden">
+            <img src="./assets/prev.svg" alt="prev" class="pageButton">
+        </div>
+    </div>
+
+</header>
+<main>
+    <div class="graphsContainer">
+        <div id="getComments" class="graph" style="order: 0">
+            <canvas id="getCommentsChart"></canvas>
+        </div>
+        <div id="cpuUsage" class="graph">
+            <canvas id="cpuUsageChart"></canvas>
+        </div>
+        <div id="addComments" class="graph" style="order: 2">
+            <canvas id="addCommentsChart"></canvas>
+        </div>
+        <div id="addComment" class="graph" style="order: 3">
+            <canvas id="addCommentChart"></canvas>
+        </div>
+        <div id="deleteComment" class="graph" style="order: 4">
+            <canvas id="deleteCommentChart"></canvas>
+        </div>
+        <div id="updateComment" class="graph" style="order: 5">
+            <canvas id="updateCommentChart"></canvas>
+        </div>
+        <div id="getPosts" class="graph hidden" style="order: 0">
+            <canvas id="getPostsChart"></canvas>
+        </div>
+        <div id="addPosts" class="graph hidden" style="order: 2">
+            <canvas id="addPostsChart"></canvas>
+        </div>
+        <div id="addPost" class="graph hidden" style="order: 3">
+            <canvas id="addPostChart"></canvas>
+        </div>
+        <div id="updatePost" class="graph hidden" style="order: 4">
+            <canvas id="updatePostChart"></canvas>
+        </div>
+    </div>
+</main>
 </body>
 </html>

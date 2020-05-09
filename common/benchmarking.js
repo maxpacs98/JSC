@@ -2,8 +2,11 @@
 // const gql = require('../clients/gqlclient');
 // const { generateComments } = require("./mock");
 
+import { addCommentRest, getAllPostsRest } from "../clients/restclient.js";
+import { addCommentGql, getAllPostsGql } from "../clients/gqlclient.js";
+
 const defaultArguments = [true];
-const iterations = 100;
+const iterations = 10;
 
 async function* calculateMean(fun, argz, type, auxiliary, clear) {
     // let time = 0;
@@ -14,7 +17,7 @@ async function* calculateMean(fun, argz, type, auxiliary, clear) {
         }
         const t = await fun(...[...argz, ...defaultArguments]);
         yield t;
-        console.log(`This ${type} iteration was done in: ${t}`);
+        // console.log(`This ${type} iteration was done in: ${t}`);
         // time += t;
         if (clear) {
             await clear(...defaultArguments);
@@ -26,10 +29,10 @@ async function* calculateMean(fun, argz, type, auxiliary, clear) {
 }
 
 async function* benchmark(restParams, gqlParams, auxiliaryParams, clearParams) {
-    const { restFun, argumentsRest } = restParams;
-    const { gqlFun, argumentsGql } = gqlParams;
-    const { gqlAuxFun, restAuxFun } = auxiliaryParams || {};
-    const { clearRestFun, clearGqlFun } = clearParams || {};
+    const {restFun, argumentsRest} = restParams;
+    const {gqlFun, argumentsGql} = gqlParams;
+    const {gqlAuxFun, restAuxFun} = auxiliaryParams || {};
+    const {clearRestFun, clearGqlFun} = clearParams || {};
 
     console.log(`Starting benchmarking`);
     let rest = calculateMean(restFun, argumentsRest, "rest", restAuxFun, clearRestFun);
@@ -37,7 +40,7 @@ async function* benchmark(restParams, gqlParams, auxiliaryParams, clearParams) {
 
     let restResult = await rest.next();
     let gqlResult = await gql.next();
-    while(!restResult.done || !gqlResult.done) {
+    while (!restResult.done || !gqlResult.done) {
         yield {restResult, gqlResult}
         restResult = await rest.next();
         gqlResult = await gql.next();
@@ -50,9 +53,9 @@ async function* benchmark(restParams, gqlParams, auxiliaryParams, clearParams) {
     // return {rest: timeRest / iterations, gql: timeGql / iterations}
 }
 
-function benchmarkAdd(generateFunction, restFunction, gqlFunction, clearRest, clearGql) {
+export async function* benchmarkAdd(generateFunction, restFunction, gqlFunction, clearRest, clearGql) {
     const comment = generateFunction(1);
-    benchmark({
+    let gen = benchmark({
             restFun: restFunction,
             argumentsRest: [comment]
         },
@@ -66,13 +69,12 @@ function benchmarkAdd(generateFunction, restFunction, gqlFunction, clearRest, cl
         //     clearRestFun: clearGql
         // }
     )
-        .then(res => {
-            console.log(res);
-            console.log("Deleting all entered entities, all clear");
-        });
+    for await (let value of gen) {
+        yield value;
+    }
 }
 
-export async function * benchmarkGetAll(restFun, gqlFun) {
+export async function* benchmarkGetAll(restFun, gqlFun) {
     let gen = benchmark({
             restFun: restFun,
             argumentsRest: []
@@ -82,7 +84,6 @@ export async function * benchmarkGetAll(restFun, gqlFun) {
             argumentsGql: []
         })
     for await (let value of gen) {
-        console.log("Benchmark get all", value);
         yield value;
     }
 }
@@ -108,51 +109,56 @@ function benchmarkGetOne() {
         });
 }
 
-async function benchmarkUpdate() {
-    const comment = generateComments(1);
-    const idRest = await rest.addCommentRest(comment);
-    const idGql = await gql.addCommentGql(comment);
+export async function * benchmarkUpdate(generateFunction, restFunction, gqlFunction) {
+    const comment = generateFunction(1);
+    const idRest = await addCommentRest(comment);
+    const idGql = await addCommentGql(comment);
     comment.id = idRest;
     const commentRest = comment;
     comment.id = idGql;
 
-    const result = await benchmark({
-            restFun: rest.updateCommentRest,
+    let gen = await benchmark({
+            restFun: restFunction,
             argumentsRest: [idRest, commentRest]
         },
         {
-            gqlFun: gql.updateCommentGql,
+            gqlFun: gqlFunction,
             argumentsGql: [...Object.values(comment)]
         });
-    console.log(result);
+
+    for await (let value of gen) {
+        yield value;
+    }
+
+    // console.log(result);
     // await rest.deleteCommentRest(idRest);
     // await gql.deleteCommentGql(idGql);
-    console.log("Cleaned up the comments. All good!");
+    // console.log("Cleaned up the comments. All good!");
 }
 
-function benchmarkDelete() {
-    const comment = generateComments(1);
-    benchmark({
-            restFun: rest.deleteCommentRest,
-            argumentsRest: [comment]
+export async function* benchmarkDelete(generateFunction, restFunction, gqlFunction, restAuxFunction, gqlAuxFunction) {
+    const object = generateFunction(1);
+    let gen = benchmark({
+            restFun: restFunction,
+            argumentsRest: [object]
         },
         {
-            gqlFun: gql.deleteCommentGql,
-            argumentsGql: [comment]
+            gqlFun: gqlFunction,
+            argumentsGql: [object]
         },
         {
-            restAuxFun: rest.addCommentRest,
-            gqlAuxFun: gql.addCommentGql
+            restAuxFun: restAuxFunction,
+            gqlAuxFun: gqlAuxFunction
         })
-        .then(res => {
-            console.log(res);
-            console.log("All cleaned up!");
-        });
+
+    for await (let value of gen) {
+        yield value;
+    }
 }
 
-function benchmarkBulkAdd(generateFunction, restFunction, gqlFunction, clearRest, clearGql) {
-    const objects = generateFunction(900);
-    benchmark({
+export async function* benchmarkBulkAdd(generateFunction, restFunction, gqlFunction, clearRest, clearGql) {
+    const objects = generateFunction(50);
+    let gen = benchmark({
             restFun: restFunction,
             argumentsRest: [objects]
         },
@@ -166,40 +172,40 @@ function benchmarkBulkAdd(generateFunction, restFunction, gqlFunction, clearRest
         //     clearRestFun: clearRest
         // }
     )
-        .then(res => {
-            console.log(res);
-            console.log("All cleaned up!");
-        })
+    for await (let value of gen) {
+        yield value;
+    }
 }
 
-function benchmarkBulkDelete() {
-    const comments = generateComments(5000);
-    benchmark({
-            restFun: rest.deleteCommentsRest,
-            argumentsRest: [comments]
+export async function* benchmarkBulkDelete(generateFunction, restFunction, gqlFunction, restAuxFunction, gqlAuxFunction) {
+    const objects = generateFunction(5000);
+    let gen = benchmark({
+            restFun: restFunction,
+            argumentsRest: [objects]
         },
         {
-            gqlFun: gql.deleteCommentsGql,
-            argumentsGql: [comments]
+            gqlFun: gqlFunction,
+            argumentsGql: [objects]
         },
         {
-            restAuxFun: rest.addCommentsRest,
-            gqlAuxFun: gql.addCommentsGql
-        })
-        .then(res => {
-            console.log(res);
-            console.log("All cleaned up!"); // TODO: Improve logs
-        });
+            restAuxFun: restAuxFunction,
+            gqlAuxFun: gqlAuxFunction
+        }
+    )
+
+    for await (let value of gen) {
+        yield value;
+    }
 }
 
-async function benchmarkUpdateNested(restFunction, gqlFunction) {
-    const postsRest = await rest.getAllPostsRest();
-    const postsGQL = await gql.getAllPostsGql();
+export async function* benchmarkUpdateNested(restFunction, gqlFunction) {
+    const postsRest = await getAllPostsRest();
+    const postsGQL = await getAllPostsGql();
     let commToUpdateRest = postsRest[0].comments[2];
     let commToUpdateGql = postsGQL[0].comments[0];
     delete commToUpdateRest["timestamp"];
     delete commToUpdateGql["timestamp"];
-    const result = await benchmark({
+    let gen = benchmark({
             restFun: restFunction,
             argumentsRest: [postsRest[0].id, commToUpdateRest]
         },
@@ -207,18 +213,9 @@ async function benchmarkUpdateNested(restFunction, gqlFunction) {
             gqlFun: gqlFunction,
             argumentsGql: [postsGQL[0].id, ...Object.values(commToUpdateGql)]
         });
-    console.log(result);
-    // await rest.deleteCommentRest(idRest);
-    // await gql.deleteCommentGql(idGql);
-    console.log("Cleaned up the comments. All good!");
-}
 
-// module.exports = Object.freeze(
-//     {
-//         benchmarkGetAll,
-//         benchmarkAdd,
-//         benchmarkBulkAdd,
-//         benchmarkUpdateNested
-//     }
-// );
+    for await (let value of gen) {
+        yield value;
+    }
+}
 
