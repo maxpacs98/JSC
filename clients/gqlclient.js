@@ -14,7 +14,12 @@ async function fetchFromGqlApi(query, variables, timed) {
         })
     };
     const startTime = performance.now();
-    const result = await fetch(queries.gqlUrl, conf);
+    try {
+        const result = await fetch(queries.gqlUrl, conf);
+    }
+    catch (e) {
+        console.log()
+    }
     const endTime = performance.now();
     if (timed === true) {
         return endTime - startTime;
@@ -74,6 +79,15 @@ async function addPostGql(post, timed) {
 
 async function updatePostCommentGql(postId, commentId, text, author, likes, timed) {
     return await fetchFromGqlApi(queries.updatePostCommentMutation, {postId, commentId, text, author, likes}, timed)
+}
+
+for(let i=0;i<100;i++) {
+    try {
+        clearPostsGql().then();
+    }
+    catch (e) {
+        console.log(e);
+    }
 }
 
 module.exports = Object.freeze({
