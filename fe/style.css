@@ -1,32 +1,14 @@
-#startAll {
-    color: #fff !important;
-    text-transform: uppercase;
-    text-decoration: none;
-    background: #2E343C;
-    padding: 20px;
-    border-radius: 7px;
-    display: inline-block;
-    border: none;
-    transition: all 0.4s ease 0s;
-    margin-left: 45%;
-}
-
-#startAll:hover {
-    background: #2E343C;
-    letter-spacing: 1px;
-    -webkit-box-shadow: 0 5px 40px -10px rgba(0, 0, 0, 0.57);
-    -moz-box-shadow: 0 5px 40px -10px rgba(0, 0, 0, 0.57);
-    box-shadow: 5px 40px -10px rgba(0, 0, 0, 0.57);
-    transition: all 0.4s ease 0s;
-    cursor: pointer;
-}
-
 .graphsContainer {
-    height: 800px;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     flex-wrap: wrap;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 22em;
+    position: fixed;
+    overflow-y: scroll;
 }
 
 .graphsContainer div {
@@ -58,7 +40,7 @@
 }
 
 body {
-    overflow: hidden;
+    /*overflow: hidden;*/
     font-family: "Comfortaa", sans-serif;
     min-height: 100vh;
     background-color: #cfd9df;
@@ -66,6 +48,9 @@ body {
 }
 
 header {
+    top: 0;
+    left: 0;
+    right: 0;
     position: fixed;
     width: 100%;
     height: var(--heading-height);
@@ -98,10 +83,9 @@ h1 {
 }
 
 main {
+    overflow: auto;
     padding: calc(var(--heading-height) + 1.5vw) 4em 0;
 }
-
-
 
 .pageButton:hover {
     cursor: pointer;
@@ -145,6 +129,34 @@ main {
 .buttonsContainer {
     display: flex;
     flex-direction: row;
-    margin-right: 50px;
+    margin-right: 3%;
     float: right;
+}
+
+.tooltip {
+    /*position: relative;*/
+    /*display: inline-block;*/
+}
+
+.tooltip .tooltipText {
+    visibility: hidden;
+    width: 200px;
+    background-color: #2E343C;
+    color: #cfd9df;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    font-size: 12px;
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltipText {
+    visibility: visible;
+}
+
+.infoImg {
+    margin: 5px 2px 0 40px;
+    height: 35px;
+    width: 35px;
 }

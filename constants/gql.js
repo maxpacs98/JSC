@@ -49,13 +49,6 @@ export const getAllPostsQuery = `query Posts{
       id
       text
       deleted
-      comments {
-          id
-          text
-          timestamp
-          author
-          likes
-      }
   }
 }`;
 

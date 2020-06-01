@@ -38,15 +38,29 @@ async function* benchmark(restParams, gqlParams, auxiliaryParams, clearParams) {
     let rest = calculateMean(restFun, argumentsRest, "rest", restAuxFun, clearRestFun);
     let gql = calculateMean(gqlFun, argumentsGql, "gql", gqlAuxFun, clearGqlFun);
 
-    let restResult = await rest.next();
-    let gqlResult = await gql.next();
+    let restResult = {done: false};
+    let gqlResult = {done: false};
     while (!restResult.done || !gqlResult.done) {
+        let promises = [];
+        promises.push(
+             new Promise(async function (resolve, reject) {
+                 // return await ;
+                 return resolve(rest.next());
+             })
+         )
+        promises.push(
+            new Promise(async function (resolve, reject) {
+                // return await gql.next();
+                return resolve(gql.next());
+            })
+         )
+        const res = await Promise.all(promises);
+        restResult = res[0];
+        gqlResult = res[1];
         yield {restResult, gqlResult}
-        restResult = await rest.next();
-        gqlResult = await gql.next();
     }
 
-    // await new Promise(r => setTimeout(r, 1000));
+    // await new Promise(r => setTimeout(r, 0));
 
     // console.log(`Starting benchmarking for Gql`);
 
@@ -157,7 +171,7 @@ export async function* benchmarkDelete(generateFunction, restFunction, gqlFuncti
 }
 
 export async function* benchmarkBulkAdd(generateFunction, restFunction, gqlFunction, clearRest, clearGql) {
-    const objects = generateFunction(50);
+    const objects = generateFunction(100);
     let gen = benchmark({
             restFun: restFunction,
             argumentsRest: [objects]
@@ -166,7 +180,7 @@ export async function* benchmarkBulkAdd(generateFunction, restFunction, gqlFunct
             gqlFun: gqlFunction,
             argumentsGql: [objects]
         },
-        // null,
+        null,
         // {
         //     clearGqlFun: clearGql, // TODO: Be careful with this when big data arises
         //     clearRestFun: clearRest

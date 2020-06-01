@@ -58,7 +58,7 @@ function createRequestsChart(elementId, title) {
                 text: title,
                 fontSize: 18,
             },
-            scales : {
+            scales: {
                 yAxes: [{
                     scaleLabel: {
                         display: true,
@@ -194,8 +194,7 @@ function paginate(currentButton, disableButton) {
         let elem = document.getElementById(chart);
         if ((currentPage === 1 && chart.includes("Post")) || (currentPage === 2 && chart.includes("Comment"))) {
             elem.parentElement.classList.add("hidden");
-        }
-        else {
+        } else {
             elem.parentElement.classList.remove("hidden");
         }
     }
@@ -221,33 +220,40 @@ window.onload = async function () {
     ws.onmessage = function (event) {
         const values = Object.values(JSON.parse(event.data).data);
         charts.cpuUsageChart.obj.data.datasets[0].data = values;
-        if(values[0] < 3 && values[1] < 3) {
+        if (values[0] < 3 && values[1] < 3) {
             charts.cpuUsageChart.obj.options.scales.yAxes[0].ticks.max = 3;
-        }
-        else {
+        } else {
             charts.cpuUsageChart.obj.options.scales.yAxes[0].ticks.max = 100;
         }
         charts.cpuUsageChart.obj.update();
     };
 
-    document.getElementById("resetButton").addEventListener('click', function () {
+    document.getElementById("resetButton").addEventListener('click', async function () {
         for (let chart in charts) {
             let elem = document.getElementById(chart);
-
-
-            if(!chart.includes("cpu") && !elem.parentElement.classList.contains("hidden")) {
+            if (!chart.includes("cpu") && !elem.parentElement.classList.contains("hidden")) {
                 charts[chart].obj.data.datasets[0].data = [];
                 charts[chart].obj.data.datasets[1].data = [];
                 charts[chart].obj.update();
             }
         }
+        // let promises = [];
+        // const startTime = performance.now();
+        // for (let i = 0; i < 1000; i++) {
+        //     promises.push(fetch(
+        //         'http://localhost:8080/health'
+        //     ));
+        // }
+        // await Promise.all(promises);
+        // const endTime = performance.now();
+        // console.log(endTime - startTime);
     });
 
     document.getElementById("launchButton").onclick = async function () {
         for (let chart in charts) {
             let elem = document.getElementById(chart);
 
-            if(!chart.includes("cpu") && !elem.parentElement.classList.contains("hidden")) {
+            if (!chart.includes("cpu") && !elem.parentElement.classList.contains("hidden")) {
                 await updateChart(charts[chart]);
             }
         }
