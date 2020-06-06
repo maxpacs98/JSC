@@ -69,6 +69,24 @@ export const getAllPostsSmallQuery = `query Posts{
   }
 }`;
 
+export const getPostQuery = `query Post($postId: ID!){ 
+  post(postId: $postId){
+      id
+      text
+      timestamp
+      author
+      likes
+      deleted
+      comments {
+          id
+          text
+          timestamp
+          author
+          likes
+      }
+  }
+}`;
+
 export const clearPostsMutation = `mutation{
   clearPosts
 }`;

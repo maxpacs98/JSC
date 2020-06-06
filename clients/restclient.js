@@ -77,3 +77,6 @@ export async function updatePostCommentRest(postId, comment, timed) {
     return await fetchFromRestApi(`posts/${postId}`, "PUT", comment, timed);
 }
 
+export async function getOnePostRest(timed) {
+    return await fetchFromRestApi(`posts/first/`, "GET", null, timed);
+}

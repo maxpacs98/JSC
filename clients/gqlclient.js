@@ -29,7 +29,8 @@ export async function getAllCommentsGql(timed) {
 }
 
 export async function getOneCommentGql(commentId, timed) {
-    return await fetchFromGqlApi(queries.getCommentQuery, {commentId}, timed)
+    const vars = commentId !== null ? {commentId} : null;
+    return await fetchFromGqlApi(queries.getCommentQuery, vars , timed)
 }
 
 export async function clearCommentsGql(timed) {
@@ -78,4 +79,9 @@ export async function addPostGql(post, timed) {
 
 export async function updatePostCommentGql(postId, commentId, text, author, likes, timed) {
     return await fetchFromGqlApi(queries.updatePostCommentMutation, {postId, commentId, text, author, likes}, timed)
+}
+
+export async function getOnePostGql(postId, timed) {
+    const vars = postId !== undefined ? {postId} : {postId: ""};
+    return await fetchFromGqlApi(queries.getPostQuery, vars , timed)
 }

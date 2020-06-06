@@ -1,5 +1,5 @@
-import { addCommentRest, getAllPostsRest } from "../clients/restclient.js";
-import { addCommentGql, getAllPostsGql } from "../clients/gqlclient.js";
+import { addCommentRest, getOnePostRest } from "../clients/restclient.js";
+import { addCommentGql, getOnePostGql } from "../clients/gqlclient.js";
 
 const defaultArguments = [true];
 const iterations = 10;
@@ -215,19 +215,20 @@ export async function* benchmarkBulkDelete(generateFunction, restFunction, gqlFu
 }
 
 export async function* benchmarkUpdateNested(restFunction, gqlFunction) {
-    const postsRest = await getAllPostsRest();
-    const postsGQL = await getAllPostsGql();
-    let commToUpdateRest = postsRest[0].comments[2];
-    let commToUpdateGql = postsGQL[0].comments[0];
+    const postRest = await getOnePostRest();
+    const postGQL = await getOnePostGql();
+    console.log("Rest", postRest, "gql", postGQL);
+    let commToUpdateRest = postRest.comments[2];
+    let commToUpdateGql = postGQL.comments[0];
     delete commToUpdateRest["timestamp"];
     delete commToUpdateGql["timestamp"];
     let gen = benchmark({
             restFun: restFunction,
-            argumentsRest: [postsRest[0].id, commToUpdateRest]
+            argumentsRest: [postRest.id, commToUpdateRest]
         },
         {
             gqlFun: gqlFunction,
-            argumentsGql: [postsGQL[0].id, ...Object.values(commToUpdateGql)]
+            argumentsGql: [postGQL.id, ...Object.values(commToUpdateGql)]
         });
 
     for await (let value of gen) {
