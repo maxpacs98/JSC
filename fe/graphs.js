@@ -1,41 +1,44 @@
 import {
-    getAllPostsRest,
-    addPostsRest,
-    addPostRest,
-    updatePostCommentRest,
-    getAllCommentsRest,
-    addCommentsRest,
     addCommentRest,
+    addCommentsRest,
+    addPostRest,
+    addPostsRest,
     deleteCommentRest,
-    updateCommentRest
+    getAllCommentsRest,
+    getAllPostsRest,
+    updateCommentRest,
+    updatePostCommentRest
 } from "../clients/restclient.js";
 import {
-    benchmarkGetAll,
-    benchmarkBulkAdd,
     benchmarkAdd,
-    benchmarkUpdateNested,
+    benchmarkBulkAdd,
     benchmarkDelete,
-    benchmarkUpdate
+    benchmarkGetAll,
+    benchmarkUpdate,
+    benchmarkUpdateNested
 } from "../common/benchmarking.js"
 import {
-    getAllPostsGql,
-    addPostsGql,
-    addPostGql,
-    updatePostCommentGql,
-    getAllCommentsGql,
-    addCommentsGql,
     addCommentGql,
+    addCommentsGql,
+    addPostGql,
+    addPostsGql,
     deleteCommentGql,
-    updateCommentGql
+    getAllCommentsGql,
+    getAllPostsSmallGql,
+    updateCommentGql,
+    updatePostCommentGql
 } from "../clients/gqlclient.js";
-import {generatePosts, generateComments} from "../common/mock.js"
+import {generateComments, generatePosts} from "../common/mock.js"
 import {commonOptions} from "../constants/fe.js";
+import {pageOneInfo, pageTwoInfo} from "../constants/fe.js";
 
 let charts = {};
 let currentPage = 1;
 
 
 function createRequestsChart(elementId, title) {
+    /* Creates a line chart for an element with the given title  */
+
     return new Chart(document.getElementById(elementId), {
         type: 'line',
         data: {
@@ -75,6 +78,8 @@ function createRequestsChart(elementId, title) {
 }
 
 function createBarChart(elementId, title) {
+    /* Creates a barchart chart for an element with the given title  */
+
     return new Chart(document.getElementById(elementId), {
         type: 'bar',
         data: {
@@ -121,6 +126,8 @@ function createBarChart(elementId, title) {
 }
 
 function createAllCharts() {
+    /* Initialize all the charts instances  */
+
     const getCommentsChartInstance = createRequestsChart("getCommentsChart", "Get All 1st Modeling");
     const addCommentsChartInstance = createRequestsChart("addCommentsChart", "Bulk Add 1st Modeling");
     const addCommentChartInstance = createRequestsChart("addCommentChart", "Add 1st Modeling");
@@ -164,7 +171,7 @@ function createAllCharts() {
         "getPostsChart": {
             obj: getPostsChartInstance,
             fun: benchmarkGetAll,
-            argz: [getAllPostsRest, getAllPostsGql]
+            argz: [getAllPostsRest, getAllPostsSmallGql]
         },
         "addPostsChart": {
             obj: addPostsChartInstance,
@@ -190,6 +197,8 @@ function createAllCharts() {
 }
 
 function paginate(currentButton, disableButton) {
+    /* Handles the changes of pages  */
+
     for (let chart in charts) {
         let elem = document.getElementById(chart);
         if ((currentPage === 1 && chart.includes("Post")) || (currentPage === 2 && chart.includes("Comment"))) {
@@ -200,6 +209,7 @@ function paginate(currentButton, disableButton) {
     }
     currentButton.parentElement.classList.remove("hidden");
     disableButton.parentElement.classList.add("hidden");
+    document.getElementsByClassName('tooltipText').item(0).innerHTML = currentPage === 1 ? pageOneInfo : pageTwoInfo;
 }
 
 window.onload = async function () {
@@ -216,6 +226,7 @@ window.onload = async function () {
         paginate(next, prev);
     }
 
+    /* Websocket for CPU usage chart  */
     const ws = new WebSocket("ws://127.0.0.1:8765/");
     ws.onmessage = function (event) {
         const values = Object.values(JSON.parse(event.data).data);
@@ -228,6 +239,7 @@ window.onload = async function () {
         charts.cpuUsageChart.obj.update();
     };
 
+    /* Reset button handler  */
     document.getElementById("resetButton").addEventListener('click', async function () {
         for (let chart in charts) {
             let elem = document.getElementById(chart);
@@ -249,6 +261,7 @@ window.onload = async function () {
         // console.log(endTime - startTime);
     });
 
+    /* Launching all the graphs button handler  */
     document.getElementById("launchButton").onclick = async function () {
         for (let chart in charts) {
             let elem = document.getElementById(chart);
@@ -258,22 +271,9 @@ window.onload = async function () {
             }
         }
     }
-
-    // const startAllButton = document.getElementById("startAll");
-    // startAllButton.onclick = async function () {
-    //     let promises = [];
-    //     for (let chart of charts) {
-    //         promises.push(
-    //             new Promise(async function (resolve, reject) {
-    //                 await updateChart(chart);
-    //                 resolve();
-    //             })
-    //         )
-    //     }
-    //     await Promise.all(promises);
-    // }
 }
 
+/* Updating chart data every time a response comes from the be */
 async function updateChart(chart) {
     chart.obj.data.datasets[0].data = [];
     chart.obj.data.datasets[1].data = [];

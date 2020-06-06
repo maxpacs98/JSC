@@ -1,6 +1,7 @@
 import * as queries from "../constants/gql.js";
 
 async function fetchFromGqlApi(query, variables, timed) {
+    /* Sends the corresponding query with variables to GQL api and times it if time is set to true */
     const conf = {
         method: 'POST',
         headers: {
@@ -22,6 +23,7 @@ async function fetchFromGqlApi(query, variables, timed) {
     }
 }
 
+/* Procedures to set the specific query and params for sending to the be service*/
 export async function getAllCommentsGql(timed) {
     return await fetchFromGqlApi(queries.getCommentsQuery, null, timed)
 }
@@ -56,6 +58,10 @@ export async function deleteCommentsGql(commentIds, timed) {
 
 export async function getAllPostsGql(timed) {
     return await fetchFromGqlApi(queries.getAllPostsQuery, null, timed)
+}
+
+export async function getAllPostsSmallGql(timed) {
+    return await fetchFromGqlApi(queries.getAllPostsSmallQuery, null, timed)
 }
 
 export async function clearPostsGql(timed) {

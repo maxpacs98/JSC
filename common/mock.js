@@ -1,8 +1,6 @@
 import { CommentInput, PostInput } from "../models/socialmedia.js";
-// import faker from "../node_modules/faker.js";
-// const {CommentInput, PostInput} = require('../models/socialmedia');
-// const faker = require("faker");
 
+/* Generating data for addition of comments and posts */
 export function generateComments(number) {
     let comments = [];
     for (let i = 0; i < number; i++) {
@@ -23,8 +21,3 @@ export function generatePosts(number) {
     }
     return number === 1 ? posts[0] : posts
 }
-
-// module.exports = Object.freeze({
-//     generateComments,
-//     generatePosts
-// });

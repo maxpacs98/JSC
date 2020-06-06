@@ -2,6 +2,8 @@ import { restUrl } from "../constants/rest.js";
 
 
 async function fetchFromRestApi(endpoint, method, data, timed) {
+    /* Sends the corresponding query with variables to GQL api and times it if time is set to true */
+
     let conf = {
         method: method,
         headers: {
@@ -21,6 +23,7 @@ async function fetchFromRestApi(endpoint, method, data, timed) {
     }
 }
 
+/* Procedures to set the specific endpoint and params for sending to the be service*/
 export async function getAllCommentsRest(timed) {
     return await fetchFromRestApi("comments", "GET", null, timed);
 }

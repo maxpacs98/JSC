@@ -148,7 +148,6 @@ main {
     padding: 5px 0;
     font-size: 12px;
     position: absolute;
-    z-index: 1;
 }
 
 .tooltip:hover .tooltipText {

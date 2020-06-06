@@ -48,7 +48,24 @@ export const getAllPostsQuery = `query Posts{
   posts{
       id
       text
+      timestamp
+      author
+      likes
       deleted
+      comments {
+          id
+          text
+          timestamp
+          author
+          likes
+      }
+  }
+}`;
+
+export const getAllPostsSmallQuery = `query Posts{ 
+  posts{
+      id
+      text
   }
 }`;
 

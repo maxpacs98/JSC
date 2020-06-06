@@ -1,7 +1,3 @@
-// const rest = require('../clients/restclient');
-// const gql = require('../clients/gqlclient');
-// const { generateComments } = require("./mock");
-
 import { addCommentRest, getAllPostsRest } from "../clients/restclient.js";
 import { addCommentGql, getAllPostsGql } from "../clients/gqlclient.js";
 
@@ -9,6 +5,9 @@ const defaultArguments = [true];
 const iterations = 10;
 
 async function* calculateMean(fun, argz, type, auxiliary, clear) {
+    /* Calculates the average of the response times over all iterations
+     Sets up, tears down after they are executed*/
+
     // let time = 0;
     const copyArg = argz;
     for (let i = 0; i < iterations; i++) {
@@ -29,6 +28,7 @@ async function* calculateMean(fun, argz, type, auxiliary, clear) {
 }
 
 async function* benchmark(restParams, gqlParams, auxiliaryParams, clearParams) {
+    /* Sends asynchronously one REST and one GQL request every iteration and yields their response times */
     const {restFun, argumentsRest} = restParams;
     const {gqlFun, argumentsGql} = gqlParams;
     const {gqlAuxFun, restAuxFun} = auxiliaryParams || {};
@@ -67,6 +67,7 @@ async function* benchmark(restParams, gqlParams, auxiliaryParams, clearParams) {
     // return {rest: timeRest / iterations, gql: timeGql / iterations}
 }
 
+/* Generators to set the corresponding generate the coresponding arguments and yield the results */
 export async function* benchmarkAdd(generateFunction, restFunction, gqlFunction, clearRest, clearGql) {
     const comment = generateFunction(1);
     let gen = benchmark({
@@ -79,7 +80,7 @@ export async function* benchmarkAdd(generateFunction, restFunction, gqlFunction,
         },
         // null,
         // {
-        //     clearGqlFun: clearRest, // TODO: Be careful with this when big data arises
+        //     clearGqlFun: clearRest,
         //     clearRestFun: clearGql
         // }
     )
@@ -171,7 +172,8 @@ export async function* benchmarkDelete(generateFunction, restFunction, gqlFuncti
 }
 
 export async function* benchmarkBulkAdd(generateFunction, restFunction, gqlFunction, clearRest, clearGql) {
-    const objects = generateFunction(100);
+    const arg = generateFunction.name === 'generateComments' ? 1000 : 250;
+    const objects = generateFunction(arg);
     let gen = benchmark({
             restFun: restFunction,
             argumentsRest: [objects]
@@ -182,7 +184,7 @@ export async function* benchmarkBulkAdd(generateFunction, restFunction, gqlFunct
         },
         null,
         // {
-        //     clearGqlFun: clearGql, // TODO: Be careful with this when big data arises
+        //     clearGqlFun: clearGql,
         //     clearRestFun: clearRest
         // }
     )
